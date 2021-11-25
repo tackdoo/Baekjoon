@@ -1,0 +1,49 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+
+struct stack {
+	int value;
+	struct stack* next;
+};
+
+int push(struct stack* head, int value) {
+	struct stack* newNode = (struct stack*)malloc(sizeof(struct stack));
+	newNode->next = NULL;
+	newNode->value = value;
+
+	if (head->next == NULL) head->next = newNode;
+	else {
+		newNode->next = head->next;
+		head->next = newNode;
+	}
+
+	return head->next->value;
+}
+
+int pop(struct stack* head) {
+	int value;
+	if (head->next == NULL) return -1;
+	struct stack* newNode = head->next;
+	head->next = head->next->next;
+	value = newNode->value;
+	free(newNode);
+	return value;
+}
+
+int main()
+{
+	struct stack* head = (struct stack*)malloc(sizeof(struct stack));
+	head->next = NULL;
+	int K;
+	int num;
+	unsigned long long int sum = 0;
+	scanf("%d", &K);
+
+	for (int i = 0; i < K; i++) {
+		scanf("%d", &num);
+		if (num == 0) sum -=pop(head);
+		else sum+=push(head, num);
+	}
+	printf("%d\n", sum);
+}
