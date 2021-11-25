@@ -1,0 +1,120 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct tree {
+	char value;
+	struct tree* Llink;
+	struct tree* Rlink;
+}TREE;
+
+void Pick_Char(char* arr) {
+	int count = 0;
+	for (int i = 0; i < sizeof(arr); i++) {
+		if (arr[i] != ' ') {
+			arr[count] = arr[i];
+			count++;
+		}
+		else if (arr[i] == '\n') return;
+	}
+}
+
+struct tree* Find_Point(struct tree* root,char point) {
+	struct tree* i = root;
+	if (i != NULL) {
+		if (i->value == point) return i;
+		else {
+			struct tree* tmp = Find_Point(i->Llink, point);
+			if (tmp != NULL) return tmp;
+			return Find_Point(i->Rlink, point);
+		}
+	}
+	return NULL;
+}
+
+void Add_Tree(struct tree* head, char root, char L_char, char R_char) {
+
+	struct tree* new_Node = (struct tree*)malloc(sizeof(struct tree));
+	new_Node->value = root;
+	new_Node->Llink = NULL;
+	new_Node->Rlink = NULL;
+	
+	if (root == 'A') { //첫번째 노드가 들어오면
+		head->Llink = new_Node;
+		if (L_char != '.') {//왼쪽 노드가 들어오면
+			struct tree* L_Node = (struct tree*)malloc(sizeof(struct tree));
+			L_Node->value = L_char;
+			new_Node->Llink = L_Node;
+			L_Node->Llink = NULL;
+			L_Node->Rlink = NULL;
+		}
+		if (R_char != '.') {
+			struct tree* R_Node = (struct tree*)malloc(sizeof(struct tree));
+			R_Node->value = R_char;
+			R_Node->Llink = NULL;
+			R_Node->Rlink = NULL;
+			new_Node->Rlink = R_Node;
+		}
+		return;
+	}
+	//기존의 노드를 찾아서
+	new_Node = Find_Point(head->Llink, root);
+	if (L_char != '.') {//왼쪽 노드가 들어오면
+		struct tree* L_Node = (struct tree*)malloc(sizeof(struct tree));
+		L_Node->value = L_char;
+		new_Node->Llink = L_Node;
+		L_Node->Llink = NULL;
+		L_Node->Rlink = NULL;
+	}
+	if (R_char != '.') {
+		struct tree* R_Node = (struct tree*)malloc(sizeof(struct tree));
+		R_Node->value = R_char;
+		R_Node->Llink = NULL;
+		R_Node->Rlink = NULL;
+		new_Node->Rlink = R_Node;
+	}
+	return;
+}
+
+
+void Front_Print(struct tree* root) {
+	printf("%c", root->value);
+	if (root->Llink != NULL) Front_Print(root->Llink);
+	if (root->Rlink != NULL) Front_Print(root->Rlink);
+}
+
+void Center_Print(struct tree* root) {
+	if (root->Llink != NULL) Center_Print(root->Llink);
+	printf("%c", root->value);
+	if (root->Rlink != NULL) Center_Print(root->Rlink);
+}
+
+void Behind_Print(struct tree* root) {
+	if (root->Llink != NULL) Behind_Print(root->Llink);
+	if (root->Rlink != NULL) Behind_Print(root->Rlink);
+	printf("%c", root->value);
+}
+
+int main()
+{
+	struct tree* head = (struct tree*)malloc(sizeof(struct tree));
+	head->Llink = NULL;
+	head->Rlink = NULL;
+	int N;
+	scanf("%d", &N);
+
+	getchar();
+	for (int i = 0; i < N; i++) {
+		char add_Node[3];
+		scanf("%c %c %c", &add_Node[0], &add_Node[1], &add_Node[2]);
+		getchar();
+		Add_Tree(head, add_Node[0], add_Node[1], add_Node[2]);
+	}
+	
+	Front_Print(head->Llink);
+	printf("\n");
+	Center_Print(head->Llink);
+	printf("\n");
+	Behind_Print(head->Llink);
+}
