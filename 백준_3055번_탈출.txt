@@ -1,0 +1,146 @@
+#pragma warning(disable:4996)
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+char arr[51][51];
+bool is_visit[51][51];
+int R, C;
+
+struct queue {
+	int x, y;
+	int count;
+	struct queue* next;
+};
+
+void push(struct queue* head, struct queue* tail, int x, int y, int count) {
+	struct queue* newNode = (struct queue*)malloc(sizeof(struct queue));
+	newNode->x = x;
+	newNode->y = y;
+	newNode->count = count;
+	newNode->next = NULL;
+	if (head->next == NULL) {
+		head->next = newNode;
+		tail->next = newNode;;
+	}
+	else {
+		tail->next->next = newNode;
+		tail->next = newNode;
+	}
+}
+
+void pop(struct queue* head, struct queue* tail) {
+	if (head->next == NULL) return;
+	
+	struct queue* newNode = head->next;
+
+	if (head->next == tail->next) {
+		head->next = NULL;
+		tail->next = NULL;
+	}
+	else {
+		head->next = head->next->next;
+	}
+	free(newNode);
+}
+
+void full_water(struct queue* head, struct queue* tail, int count) {
+	if (head->next == NULL) return;
+	int dx[4] = { 1,0,-1,0 };
+	int dy[4] = { 0,1,0,-1 };
+	while (1) {
+			int x = head->next->x;
+			int y = head->next->y;
+			int value = head->next->count;
+			if (count <= value) return;
+			pop(head, tail);
+		for (int i = 0; i < 4; i++) {
+			if (x + dx[i] >= 0 && x + dx[i] < R) {
+				if (y + dy[i] >= 0 && y + dy[i] < C) {
+					if (!(is_visit[x + dx[i]][y + dy[i]]) && arr[x+dx[i]][y+dy[i]] !='D') {
+						is_visit[x + dx[i]][y + dy[i]] = true;
+						push(head, tail, x + dx[i], y + dy[i], count);
+					}
+				}
+			}
+		}
+		if (head->next == NULL) return;
+	}
+}
+
+int find_home(struct queue* head, struct queue* tail, int count) {
+	if (head->next == NULL) return 0;
+	int dx[4] = { 1,0,-1,0 };
+	int dy[4] = { 0,1,0,-1 };
+	while (1) {
+		int x = head->next->x;
+		int y = head->next->y;
+		int value = head->next->count;
+		if (value >= count) return 0;
+		pop(head, tail);
+		for (int i = 0; i < 4; i++) {
+			if (x + dx[i] >= 0 && x + dx[i] < R) {
+				if (y + dy[i] >= 0 && y + dy[i] < C) {
+					if (!(is_visit[x + dx[i]][y + dy[i]])) {
+						if (arr[x + dx[i]][y + dy[i]] == 'D') return count;
+						is_visit[x + dx[i]][y + dy[i]] = true;
+						push(head, tail, x + dx[i], y + dy[i], count);
+					}
+				}
+			}
+		}
+		if (head->next == NULL) return 0;
+	}
+	return 0;
+}
+
+int find_road(struct queue* w_head, struct queue* w_tail, struct queue* h_head, struct queue* h_tail, int count) {
+	int value = 0;
+	count++;
+	if (h_head->next == NULL && w_head->next==NULL) return 0;
+	
+	full_water(w_head, w_tail, count);
+	value = find_home(h_head, h_tail, count);
+	if (value != 0) return value;
+	else return find_road(w_head, w_tail, h_head, h_tail, count);
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	struct queue* w_head = (struct queue*)malloc(sizeof(struct queue));
+	struct queue* w_tail = (struct queue*)malloc(sizeof(struct queue));
+	struct queue* h_head = (struct queue*)malloc(sizeof(struct queue));
+	struct queue* h_tail = (struct queue*)malloc(sizeof(struct queue));
+	w_head->next = NULL;
+	w_tail->next = NULL;
+	h_head->next = NULL;
+	h_tail->next = NULL;
+
+	cin >> R >> C;
+	
+	for (int i = 0; i < R; i++) {
+		for (int j = 0; j < C; j++) {
+			cin >> arr[i][j];
+			if (arr[i][j] == 'S') {
+				is_visit[i][j] = true;
+				push(h_head, h_tail, i, j, 0);
+			}
+			else if (arr[i][j] == '*') {
+				is_visit[i][j] = true;
+				push(w_head, w_tail, i, j, 0);
+			}
+			else if (arr[i][j] == 'X') {
+				is_visit[i][j] = true;
+			}
+		}
+	}
+
+	int value = find_road(w_head, w_tail, h_head, h_tail, 0);
+
+	if (value == 0) cout << "KAKTUS\n";
+	else cout << value << "\n";
+}
