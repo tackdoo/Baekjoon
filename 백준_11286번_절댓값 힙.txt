@@ -1,0 +1,95 @@
+#include <iostream>
+using namespace std;
+
+int arr[2][100001];
+
+void heaptify(long long int value, int end) {
+	arr[0][end] = value;
+	if (value < 0) arr[1][end] = value * -1;
+	else arr[1][end] = value;
+
+	while (end > 0) {
+		int root = (end - 1) / 2;
+		if (arr[1][root] == arr[1][end]) {
+			if (arr[0][root] > arr[0][end]) {
+				int temp = arr[0][root];
+				arr[0][root] = arr[0][end];
+				arr[0][end] = temp;
+			}
+		}
+		else if (arr[1][root] > arr[1][end]) {
+				int temp = arr[0][root];
+				arr[0][root] = arr[0][end];
+				arr[0][end] = temp;
+				temp = arr[1][root];
+				arr[1][root] = arr[1][end];
+				arr[1][end] = temp;
+		}
+		else break;
+
+		end = root;
+	}
+}
+
+
+int sort(int end) {
+	int value = arr[0][0];
+	arr[0][0] = arr[0][end];
+	arr[1][0] = arr[1][end];
+	arr[0][end] = 0;
+	arr[1][end] = 0;
+
+	int root = 0;
+	while (root < end) {
+		int child = root * 2 + 1;
+		if (child >= end) break;
+		if (child + 1 < end) {
+			if (arr[1][child + 1] == arr[1][child]) {
+				if (arr[0][child] > arr[0][child + 1]) child++;
+			}
+			else if (arr[1][child] > arr[1][child + 1]) child++;
+		}
+		if (arr[1][root] == arr[1][child]) {
+			if (arr[0][root] > arr[0][child]) {
+				int temp = arr[0][root];
+				arr[0][root] = arr[0][child];
+				arr[0][child] = temp;
+			}
+		}
+		else if (arr[1][root] > arr[1][child]) {
+			int temp = arr[0][root];
+			arr[0][root] = arr[0][child];
+			arr[0][child] = temp;
+			temp = arr[1][root];
+			arr[1][root] = arr[1][child];
+			arr[1][child] = temp;
+		}
+		else return value;
+
+		root = child;
+	}
+	return value;
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int N;
+	cin >> N;
+	int end = 0;
+
+	for (int i = 0; i < N; i++) {
+		int value;
+		cin >> value;
+		if (value != 0) {
+			heaptify(value, end++);
+		}
+		else {
+			if (end == 0) cout << "0\n";
+			else cout << sort(--end) << "\n";
+		}
+	}
+}
