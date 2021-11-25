@@ -1,0 +1,147 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct deque {
+	int value;
+	struct deque* next;
+	struct deque* prev;
+};
+
+void push_front(struct deque* head, struct deque* tail, int value) {
+	struct deque* newNode = (struct deque*)malloc(sizeof(struct deque));
+	newNode->next = NULL;
+	newNode->prev = NULL;
+	newNode->value = value;
+	
+	if (head->next == NULL) {
+		head->next = newNode;
+		tail->next = newNode;
+	}
+	else {
+		newNode->next = head->next;
+		head->next->prev = newNode;
+		head->next = newNode;
+	}
+}
+
+void push_back(struct deque* head, struct deque* tail, int value) {
+	struct deque* newNode = (struct deque*)malloc(sizeof(struct deque));
+	newNode->next = NULL;
+	newNode->prev = NULL;
+	newNode->value = value;
+
+	if (tail->next == NULL) {
+		head->next = newNode;
+		tail->next = newNode;
+	}
+	else {
+		tail->next->next = newNode;
+		newNode->prev = tail->next;
+		tail->next = newNode;
+	}
+}
+
+int pop_front(struct deque* head, struct deque* tail) {
+	if (head->next == NULL) return -1;
+	struct deque* newNode = head->next;
+	int value=newNode->value;
+	
+	if (head->next == tail->next) {
+		tail->next = NULL;
+		head->next = NULL;
+	}
+	else head->next = head->next->next;
+
+	free(newNode);
+	return value;
+}
+
+int pop_back(struct deque* head, struct deque* tail) {
+	if (tail->next == NULL) return -1;
+	struct deque* newNode = tail->next;
+	int value = newNode->value;
+	
+	if (tail->next == head->next) {
+		tail->next = NULL;
+		head->next = NULL;
+	}
+	else tail->next = tail->next->prev;
+	
+	free(newNode);
+	return value;
+}
+
+int empty(struct deque* head) {
+	if (head->next == NULL) return 1;
+	else return 0;
+}
+
+int front(struct deque* head) {
+	if (head->next == NULL) return -1;
+	else return head->next->value;
+}
+
+int back(struct deque* tail) {
+	if (tail->next == NULL) return -1;
+	else return tail->next->value;
+}
+
+int main()
+{
+	struct deque* head = (struct deque*)malloc(sizeof(struct deque));
+	struct deque* tail = (struct deque*)malloc(sizeof(struct deque));
+	head->next = NULL;
+	tail->next = NULL;
+	int N;
+	int size = 0;
+	scanf("%d", &N);
+
+	char command[8][15] = { "push_front","push_back",
+		"pop_front","pop_back","size","empty","front","back" };
+
+	
+	for (int i = 0; i < N; i++) {
+		char obj[15] = "";
+		int value;
+		getchar();
+		scanf("%s", obj);
+
+		if (!strcmp(command[0], obj)) {
+			scanf("%d", &value);
+			push_front(head, tail, value);
+			size++;
+		}
+		else if (!strcmp(command[1], obj)) {
+			scanf("%d", &value);
+			push_back(head, tail, value);
+			size++;
+		}
+		else if (!strcmp(command[2], obj)) {
+			value = pop_front(head, tail);
+			if (value != -1) size--;
+			printf("%d\n", value);
+		}
+		else if (!strcmp(command[3], obj)) {
+			value = pop_back(head, tail);
+			if (value != -1) size--;
+			printf("%d\n", value);
+		}
+		else if (!strcmp(command[4], obj)) {
+			printf("%d\n", size);
+		}
+		else if (!strcmp(command[5], obj)) {
+			value = empty(head);
+			printf("%d\n", value);
+		}
+		else if (!strcmp(command[6], obj)) {
+			value = front(head);
+			printf("%d\n", value);
+		}
+		else if (!strcmp(command[7], obj)) {
+			value = back(tail);
+			printf("%d\n", value);
+		}
+	}
+}
