@@ -1,0 +1,39 @@
+#pragma warning(disable:4996)
+#include <iostream>
+#include <map>
+#include <cstring>
+using namespace std;
+
+map<string, int> name;
+string number[100001];
+
+int main()
+{
+	
+
+	int N, M;
+	cin >> N >> M;
+
+	for (int i = 0; i < N; i++) {
+		getchar();
+		char poketmon[21];
+		scanf("%s", &poketmon);
+		string str = poketmon;
+		name.insert(pair<string, int>(str, i + 1));
+		number[i] = str;
+	}
+
+	for (int i = 0; i < M; i++) {
+		getchar();
+		char poketmon[21];
+		scanf("%s", &poketmon);
+		if (poketmon[0] >= 'A' && poketmon[0] <= 'Z') {
+			string str = poketmon;
+			printf("%d\n", name[str]);
+		}
+		else {
+			int idx = atoi(poketmon);
+			cout << number[idx - 1] << "\n";
+		}
+	}
+}
