@@ -1,0 +1,45 @@
+#include <iostream>
+using namespace std;
+
+int arr[201][201];
+bool is_visit[201];
+int value[1001];
+int N, M;
+
+void connect(int value) {
+	if (is_visit[value]) return;
+	is_visit[value] = true;
+	for (int i = 1; i <= N; i++) {
+		if (arr[value][i]) {
+			connect(i);
+		}
+	}
+	return;
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	cin >> N >> M;
+
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= N; j++) {
+			cin >> arr[i][j];
+		}
+	}
+
+	for (int i = 0; i < M; i++) {
+		cin >> value[i];
+	}
+	connect(value[0]);
+
+	bool is_true = false;
+	for (int i = 0; i < M; i++) {
+		if (!is_visit[value[i]]) is_true = true;
+	}
+	if (is_true) cout << "NO\n";
+	else cout << "YES\n";
+}
