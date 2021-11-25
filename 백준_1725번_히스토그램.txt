@@ -1,0 +1,88 @@
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+struct stack {
+	int value;
+	int idx;
+	struct stack* next;
+};
+
+void push(struct stack* head, int value, int idx) {
+	struct stack* newNode = (struct stack*)malloc(sizeof(struct stack));
+	newNode->value = value;
+	newNode->idx = idx;
+	newNode->next = NULL;
+
+	if (head->next == NULL) {
+		head->next = newNode;
+	}
+	else {
+		newNode->next = head->next;
+		head->next = newNode;
+	}
+}
+
+int pop(struct stack* head) {
+	if (head->next == NULL) return -1;
+	struct stack* newNode = head->next;
+	int value = newNode->value;
+	head->next = head->next->next;
+	free(newNode);
+	return value;
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	struct stack* head = (struct stack*)malloc(sizeof(struct stack));
+	head->next = NULL;
+
+	int N;
+	cin >> N;
+	int max = 0;
+	for (int i = 1; i <= N; i++) {
+		int value;
+		cin >> value;
+		if (head->next == NULL) {
+			push(head, value, i);
+		}
+		else {
+			if (head->next->value < value) {
+				push(head, value, i);
+			}
+			else {
+				while (true) {
+					if (head->next == NULL) break;
+					if (head->next->value < value) break;
+					int idx = head->next->idx;
+					int val = pop(head);
+					if (head->next == NULL) {
+						max = max > val * (i-1) ? max : val * (i-1);
+					}
+					else {
+						max = max > val * (i - head->next->idx - 1) ? max : val * (i - head->next->idx - 1);
+					}
+				}
+				push(head, value, i);
+			}
+		}
+	}
+
+	while (true) {
+		if (head->next == NULL) break;
+		int idx = head->next->idx - 1;
+		int val = pop(head);
+		if (head->next == NULL) {
+			max = max > val * N ? max : val * N;
+		}
+		else {
+			max = max > val * (N - head->next->idx) ? max : val * (N - head->next->idx);
+		}
+	}
+	
+	cout << max << "\n";
+}
