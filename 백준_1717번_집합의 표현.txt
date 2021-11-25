@@ -1,0 +1,103 @@
+#include <iostream>
+using namespace std;
+#define SIZE 500000
+
+int arr[2][SIZE] = { 0, };
+bool is_true[SIZE] = { false, };
+
+int find_idx(int value) {
+	int idx = value;
+	for (int i = 0;; i++) {
+		if (idx <= 0) idx *= -1;
+		if (idx >= SIZE) idx %= SIZE;
+		if (arr[0][idx] == value || !is_true[idx]) {
+			//값이 없거나, 있는 값이면,
+			arr[0][idx] = value;
+			if (!is_true[idx]) arr[1][idx] = idx;
+			is_true[idx] = true;
+			return idx;
+		}
+		else {
+			idx = idx + 7;
+		}
+	}
+	return -1;
+}
+
+int find_num(int value) {
+	int idx = value;
+	if (idx >= SIZE) idx %= SIZE;
+	for (int i = 0; is_true[idx]; i++) {
+		if (idx <= 0) idx *= -1;
+		if (idx >= SIZE) idx %= SIZE;
+		if (arr[0][idx] == value) return idx;
+		else {
+			idx = idx + 7;
+		}
+	}
+	return -1;
+}
+
+int getParent(int idx) {
+	if (arr[0][idx] == arr[0][arr[1][idx]]) return arr[1][idx];
+	else {
+		return arr[1][idx] = getParent(arr[1][idx]);
+	}
+}
+
+void connect(int idx_1, int idx_2) {
+	idx_1 = getParent(idx_1);
+	idx_2 = getParent(idx_2);
+	if (arr[0][arr[1][idx_1]] > arr[0][arr[1][idx_2]]) arr[1][idx_1] = idx_2;
+	else arr[1][idx_2] = idx_1;
+
+}
+
+bool isUnion(int idx_1, int idx_2) {
+	idx_1 = getParent(idx_1);
+	idx_2 = getParent(idx_2);
+	if (idx_1 == idx_2) return true;
+	else return false;
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int N, M;
+	cin >> N >> M;
+	for (int i = 0; i < M; i++) {
+		int mod, value[2];
+		cin >> mod >> value[0] >> value[1];
+		if (mod == 0) {
+			int idx[2];
+			idx[0] = find_idx(value[0]);
+			idx[1] = find_idx(value[1]);
+			
+			connect(idx[0], idx[1]);
+
+		}
+		else {
+			if (value[0] == value[1]) {
+				cout << "YES\n";
+				continue;
+			}
+			int idx[2];
+			idx[0] = find_num(value[0]);
+			idx[1] = find_num(value[1]);
+			
+			if (idx[0] == -1 || idx[1] == -1) {
+				cout << "NO\n";
+				continue;
+			}
+			else if (isUnion(idx[0], idx[1])) {
+				cout << "YES\n";
+			}
+			else {
+				cout << "NO\n";
+			}
+		}
+	}
+}
