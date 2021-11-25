@@ -1,0 +1,56 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+
+void heap(unsigned long long int* arr, int value, int end) {
+	arr[end] = value;
+	while (end > 0) {
+		if (arr[end] < arr[(end - 1) / 2]) {
+			unsigned long long int temp = arr[end];
+			arr[end] = arr[(end - 1) / 2];
+			arr[(end - 1) / 2] = temp;
+			end = (end - 1) / 2;
+		}
+		else break;
+	}
+}
+
+void sort(unsigned long long int* arr, int end) {
+	int root = 0;
+	while (1) {
+		int child = root * 2 + 1;
+		if (child >= end) break;
+		if (child + 1 < end && arr[child + 1] < arr[child]) child++;
+		if (arr[root] > arr[child]) {
+			unsigned long long int temp = arr[root];
+			arr[root] = arr[child];
+			arr[child] = temp;
+			root = child;
+		}
+		else break;
+	}
+}
+
+int main()
+{
+	int N;
+	unsigned long long int arr[100001] = { 0, };
+	int idx = 0;
+	scanf("%d", &N);
+
+	for (int i = 0; i < N; i++) {
+		unsigned long long int value;
+		scanf("%lld", &value);
+		if (value == 0) {
+			printf("%d\n", arr[0]);
+			if (idx > 0) {
+				idx--;
+				arr[0] = arr[idx];
+				arr[idx] = 0;
+				sort(arr, idx);
+			}
+		}
+		else {
+			heap(arr, value, idx++);
+		}
+	}
+}
