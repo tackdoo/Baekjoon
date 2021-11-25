@@ -1,0 +1,54 @@
+#pragma warning(disable:4996)
+#include <iostream>
+using namespace std;
+
+long long int arr[1000001];
+long long int sum[1000001];
+
+void update(int idx, long long int value, int end) {
+	while (idx <= end) {
+		sum[idx] += value;
+		idx += (idx & -idx);
+	}
+}
+
+long long int find_sum(int idx, int end = 1) {
+	long long int value = 0;
+	while (idx >= end) {
+		value += sum[idx];
+		idx -= (idx & -idx);
+	}
+
+	return value;
+}
+
+int main()
+{
+	
+	int N, M, K;
+	scanf("%d %d %d",&N,&M,&K);
+
+	for (int i = 1; i <= N; i++) {
+		scanf("%lld", &arr[i]);
+		update(i, arr[i], N);
+	}
+
+	for (int i = 0; i < M + K; i++) {
+		int a, b;
+		long long int c;
+		scanf("%d", &a);
+		if (a == 1) {//업데이트
+			int idx;
+			long long int value;
+			scanf("%d %lld", &idx, &value);
+			update(idx, value - arr[idx], N);
+			arr[idx] = value;
+		}
+		else if (a==2) { //구간 합
+			int b, c;
+			scanf("%d %d", &b, &c);
+			printf("%lld\n", find_sum(c) - find_sum(b - 1));
+		}
+	}
+	
+}
