@@ -1,0 +1,28 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+int arr[10001];
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	int N;
+	cin >> N;
+	arr[1] = 666;
+	int num = 1666;
+	int count = 2;
+	while (count <= N) {
+		string a = to_string(num++);
+		for (int i = 0; i < a.length()-2; i++) {
+			if ((a[i] == '6' && a[i + 1] == '6') && a[i + 2] == '6') {
+				arr[count++] = stoi(a);
+				break;
+			}
+		}
+	}
+	cout << arr[N] << "\n";
+}
