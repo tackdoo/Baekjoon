@@ -1,0 +1,49 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+
+struct queue {
+	int value;
+	struct queue* next;
+};
+
+void push(struct queue* head, struct queue* tail, int value) {
+	struct queue* newNode = (struct queue*)malloc(sizeof(struct queue));
+	newNode->next = NULL;
+	newNode->value = value;
+
+	if (head->next == NULL) head->next = newNode;
+	else tail->next->next = newNode;
+	tail->next = newNode;
+}
+
+int pop(struct queue* head, struct queue* tail) {
+	if (head->next == NULL) return -1;
+	struct queue* newNode = head->next;
+	head->next = head->next->next;
+	if (head->next == NULL) tail->next = NULL;
+	int value = newNode->value;
+	free(newNode);
+	return value;
+} 
+
+int main()
+{
+	struct queue* head = (struct queue*)malloc(sizeof(struct queue));
+	head->next = NULL;
+	struct queue* tail = (struct queue*)malloc(sizeof(struct queue));
+	tail->next = NULL;
+	int N;
+	scanf("%d", &N);
+
+	for (int i = 0; i < N; i++) push(head, tail, i + 1);
+
+	for (int i = 1; i < N; i++) {
+		if (head->next->next == NULL) break;
+		pop(head, tail);
+		if (head->next->next == NULL) break;
+		int value = pop(head, tail);
+		push(head, tail, value);
+	}
+	printf("%d\n", head->next->value);
+}
