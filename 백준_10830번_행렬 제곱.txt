@@ -1,0 +1,76 @@
+#include <iostream>
+using namespace std;
+
+long long int arr[5][5] = { 0, };
+int temp[5][5] = { 0, };
+int value[5][5] = { 0, };
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int N;
+	long long int X;
+
+	cin >> N >> X;
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> value[i][j];
+			temp[i][j] = value[i][j];
+		}
+		arr[i][i] = 1;
+	}
+
+	while (X > 0) {
+		
+		//행렬의 제곱을 나눈 수가 홀 수 라면, 지금의 행렬을 
+		//value에 곱해주고, 아니라면, /2를 한 뒤 continue 해 준다.
+		long long int matrix[5][5] = { 0, };
+
+		if (X & 1) {
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					for (int k = 0; k < N; k++) {
+						matrix[i][j] += arr[i][k] * temp[k][j];
+						matrix[i][j] = matrix[i][j] >= 1000 ? matrix[i][j] % 1000 : matrix[i][j];
+					}
+				}
+			}
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					arr[i][j] = matrix[i][j];
+				}
+			}
+		}
+		if (X == 1) break;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) matrix[i][j] = 0;
+		}
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				for (int k = 0; k < N; k++) {
+					matrix[i][j] += temp[i][k] * temp[k][j];
+					matrix[i][j] = matrix[i][j] >= 1000 ? matrix[i][j] % 1000 : matrix[i][j];
+				}
+			}
+		}
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				temp[i][j] = matrix[i][j];
+			}
+		}
+		X /= 2;
+	}
+
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cout << arr[i][j] << " ";
+		}
+		cout << "\n";
+
+	}
+}
