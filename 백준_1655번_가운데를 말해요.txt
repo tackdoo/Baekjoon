@@ -1,0 +1,113 @@
+#include <iostream>
+using namespace std;
+
+int min_arr[100001];
+int max_arr[100001];
+int min_end;
+int max_end;
+
+void min_heaptify(int value, int end) {
+	min_arr[end] = value;
+	while (end > 0) {
+		int root = (end - 1) / 2;
+		if (min_arr[end] >= min_arr[root]) {
+			int temp = min_arr[end];
+			min_arr[end] = min_arr[root];
+			min_arr[root] = temp;
+			end = root;
+		}
+		else break;
+	}
+}
+
+int min_sort(int end) {
+	int value = min_arr[0];
+	min_arr[0] = min_arr[--end];
+	
+	int root = 0;
+	while (root < end) {
+		int child = root * 2 + 1;
+		if (child >= end) break;
+		if (child + 1 < end && min_arr[child + 1] > min_arr[child]) child++;
+		if (min_arr[child] >= min_arr[root]) {
+			int temp = min_arr[root];
+			min_arr[root] = min_arr[child];
+			min_arr[child] = temp;
+			root = child;
+		}
+		else break;
+	}
+
+	return value;
+}
+
+void max_heaptify(int value, int end) {
+	max_arr[end] = value;
+	while(end > 0) {
+		int root = (end - 1) / 2;
+		if (max_arr[end] <= max_arr[root]) {
+			int temp = max_arr[end];
+			max_arr[end] = max_arr[root];
+			max_arr[root] = temp;
+			end = root;
+		}
+		else break;
+	}
+}
+
+int max_sort(int end) {
+	int value = max_arr[0];
+	max_arr[0] = max_arr[--end];
+
+	int root = 0;
+	while (root < end) {
+		int child = root * 2 + 1;
+		if (child >= end) break;
+		if (child + 1 < end && max_arr[child + 1] < max_arr[child]) child++;
+		if (max_arr[child] <= max_arr[root]) {
+			int temp = max_arr[root];
+			max_arr[root] = max_arr[child];
+			max_arr[child] = temp;
+			root = child;
+		}
+		else break;
+	}
+	return value;
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int N;
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		int value;
+		cin >> value;
+
+		if (i == 0) {
+			max_heaptify(value, max_end++);
+		}
+		else if (max_arr[0] <= value) {
+			max_heaptify(value, max_end++);
+		}
+		else {
+			min_heaptify(value, min_end++);
+		}
+		if (min_end > max_end) {
+			int temp = min_sort(min_end--);
+			max_heaptify(temp, max_end++);
+		}
+		else if (max_end > min_end + 1) {
+			int temp = max_sort(max_end--);
+			min_heaptify(temp, min_end++);
+		}
+		if ((max_end + min_end) & 1) { // 짝수이면
+			cout << max_arr[0] << "\n";
+		}
+		else cout << (min_arr[0] > max_arr[0] ? max_arr[0] : min_arr[0]) << "\n";
+
+	}
+}
