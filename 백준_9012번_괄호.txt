@@ -1,0 +1,63 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_true=0;
+struct stack {
+	struct stack* next;
+};
+
+void push(struct stack* head) {
+	struct stack* newNode = (struct stack*)malloc(sizeof(struct stack));
+	newNode->next = NULL;
+	if (head->next == NULL) head->next = newNode;
+	else {
+		newNode->next = head->next;
+		head->next = newNode;
+	}
+}
+
+void pop(struct stack* head) {
+	if (head->next == NULL) {
+		is_true = -1;
+		return;
+	}
+	else {
+		struct stack* newNode = head->next;
+		head->next = head->next->next;
+		free(newNode);
+		return;
+	}
+}
+
+void clean_Stack(struct stack* head) {
+	for (struct stack* i = head->next; head->next != NULL;) {
+		head->next = head->next->next;
+		free(i);
+		i = head->next;
+	}
+}
+
+int main() {
+	int N;
+	struct stack* head = (struct stack*)malloc(sizeof(struct stack));
+	head->next = NULL;
+
+	scanf("%d", &N);
+
+	for (int i = 0; i < N; i++) {
+		is_true = 0;
+		char str[51] = "";
+		getchar();
+		scanf("%s", str);
+		for (int j = 0; j < sizeof(str); j++) {
+			if (str[j] == '(') push(head);
+			else if (str[j] == ')') pop(head);
+			else break;
+		}
+		if (head->next == NULL && is_true == 0) printf("YES\n");
+		else printf("NO\n");
+		clean_Stack(head);
+
+	}
+}
