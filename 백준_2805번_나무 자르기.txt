@@ -1,0 +1,86 @@
+#include <iostream>
+using namespace std;
+
+int arr[1000001];
+int N, M;
+
+void heaptify(int value, int end) {
+	arr[end] = value;
+	while (end > 0) {
+		int root = (end - 1) / 2;
+		if (arr[end] < arr[root]) {
+			int temp = arr[end];
+			arr[end] = arr[root];
+			arr[root] = temp;
+			end = root;
+		}
+		else break;
+	}
+}
+
+void sort(int end) {
+	while (end > 0) {
+		int temp = arr[end];
+		arr[end] = arr[0];
+		arr[0] = temp;
+		end--;
+		int root = 0;
+		while (root <= end) {
+			int child = root * 2 + 1;
+			if (child > end) break;
+			if (child + 1 <= end && arr[child] > arr[child + 1]) child++;
+			if (arr[child] <= arr[root]) {
+				int tem = arr[child];
+				arr[child] = arr[root];
+				arr[root] = tem;
+				root = child;
+			}
+			else break;
+		}
+	}
+}
+
+int find_middle(int start, int end, long long int value, int count) {
+	if (start > end) return start;
+	int mid = (start + end) / 2;
+	long long int num = value - (mid - arr[count]) * (long long int)count;
+	if (num == M) return mid;
+	else if (num > M) return find_middle(mid + 1, end, value, count);
+	else if (num < M) return find_middle(start, mid - 1, value, count);
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		int value;
+		cin >> value;
+		heaptify(value, i);
+	}
+	sort(N - 1);
+	
+	long long int value = arr[0] - arr[1];
+	int high = arr[1];
+	int count = 1;
+	for (int i = 1; i < N; i++) {
+		if (value >= M) break;
+		count++;
+		value += (long long int)(arr[i] - arr[i + 1]) * count;
+		high = arr[i + 1];
+	}
+
+	if (value > M) {
+		int num = find_middle(arr[count], arr[count-1], value, count);
+		value -= (long long int)(num - arr[count]) * count;
+		if (value == M) cout << num << "\n";
+		else if (value + count >= M) cout << num - 1 << "\n";
+		else if (value + count <= M) cout << num + 1 << "\n";
+	}
+	else if (value == M) {
+		cout << high << "\n";
+	}
+}
