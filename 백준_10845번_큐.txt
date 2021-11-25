@@ -1,0 +1,83 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct queue {
+	int value;
+	struct queue* next;
+};
+
+void push_Queue(struct queue* head, struct queue* tail) {
+	struct queue* newNode = (struct queue*)malloc(sizeof(struct queue));
+	int value;
+	scanf("%d", &value);
+	newNode->next = NULL;
+	newNode->value = value;
+
+	if (head->next == NULL) {
+		head->next = newNode;
+		tail->next = newNode;
+	}
+	else {
+		tail->next->next = newNode;
+		tail->next = newNode;
+	}
+}
+
+int pop_Queue(struct queue* head, struct queue* tail) {
+	if (head->next == NULL) return -1;
+	else {
+		struct queue* i = head->next;
+		int value = i->value;
+		head->next = head->next->next;
+		//밑에 if 다시 생각하기 - > 
+		if (head->next == NULL) tail->next = NULL;
+		free(i);
+		return value;
+	}
+}
+
+int size_Queue(struct queue* head) {
+	int size = 0;
+	for (struct queue* i = head->next; i != NULL; i = i->next) size++;
+	return size;
+}
+
+int empty_Queue(struct queue* head) {
+	if (head->next == NULL) return 1;
+	else return 0;
+}
+
+int front_Queue(struct queue* head) {
+	if (head->next == NULL) return -1;
+	else return head->next->value;
+}
+
+int back_Queue(struct queue* tail) {
+	if (tail->next == NULL) return -1;
+	else return tail->next->value;
+}
+
+int main()
+{
+	struct queue* head = (struct queue*)malloc(sizeof(struct queue));
+	head->next = NULL;
+	struct queue* tail = (struct queue*)malloc(sizeof(struct queue));
+	tail->next = NULL;
+	int N;
+	scanf("%d", &N);
+	for (int i = 0; i < N; i++) {
+		char arr[10];
+		int num=1000001;
+		getchar();
+		scanf("%s", arr);
+		if (!strcmp(arr, "push")) push_Queue(head, tail);
+		else if (!strcmp(arr, "pop")) num = pop_Queue(head, tail);
+		else if (!strcmp(arr, "empty")) num = empty_Queue(head);
+		else if (!strcmp(arr, "size")) num = size_Queue(head);
+		else if (!strcmp(arr, "front")) num = front_Queue(head);
+		else if (!strcmp(arr, "back")) num = back_Queue(tail);
+		if (num != 1000001) printf("%d\n", num);
+	}
+}
