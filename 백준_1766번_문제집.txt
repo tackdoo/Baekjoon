@@ -1,0 +1,47 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+vector<int> arr[32001];
+int Entry[32001];
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	int N, M;
+	cin >> N >> M;
+
+	for (int i = 0; i < M; i++) {
+		int a, b;
+		cin >> a >> b;
+		arr[a].push_back(b);
+		Entry[b]++;
+		//우선순위와, 각 먼저 풀면 좋은 문제들을 넣어준다.
+	}
+
+	priority_queue<int> Q;
+
+	for (int i = 1; i <= N; i++) {
+		if (Entry[i] == 0) Q.push(-i);
+	}
+	while (!Q.empty()) {
+		int value = -Q.top();
+		Q.pop();
+
+		cout << value << " ";
+
+		for (int i = 0; i < arr[value].size(); i++) {
+			int num = arr[value][i];
+			Entry[num]--;
+			if (Entry[num] == 0) Q.push(-num);
+		}
+	}
+
+	cout << "\n";
+}
