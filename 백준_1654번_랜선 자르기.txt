@@ -1,0 +1,41 @@
+#include <iostream>
+using namespace std;
+
+int arr[10000];
+int K, N;
+
+int find_count(unsigned int start, unsigned int end) {
+	if (start > end) return 0;
+	unsigned int mid = (start + end) / 2;
+	int count = 0;
+	if (mid == 0) mid++;
+	for (int i = 0; i < K; i++) {
+		count += (arr[i] / mid);
+		if (count > N) break;
+	}
+	int value;
+	if (count >= N) {
+		value = find_count(mid+1, end);
+		return mid > value ? mid : value;
+	}
+	else {
+		value = find_count(start, mid-1);
+	}
+	return value;
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	cin >> K >> N;
+	int max_num = 0;
+	for (int i = 0; i < K; i++) {
+		cin >> arr[i];
+		max_num = max_num > arr[i] ? max_num : arr[i];
+	}
+
+	cout << find_count(0, max_num) << "\n";
+}
