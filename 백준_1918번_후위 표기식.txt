@@ -1,0 +1,93 @@
+#include <iostream>
+#include <cstdlib>
+#include <string>
+using namespace std;
+
+struct stack {
+	char value;
+	struct stack* next;
+};
+
+void push(struct stack* head, char value) {
+	struct stack* newNode = (struct stack*)malloc(sizeof(struct stack));
+	newNode->value = value;
+	newNode->next = NULL;
+	
+	if (head->next == NULL) {
+		head->next = newNode;
+	}
+	else {
+		newNode->next = head->next;
+		head->next = newNode;
+	}
+}
+
+char pop(struct stack* head) {
+	if (head->next == NULL) return '\0';
+	struct stack* newNode = head->next;
+	char value = newNode->value;
+	
+	head->next = head->next->next;
+	free(newNode);
+	return value;
+}
+
+int main(void)
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	struct stack* head = (struct stack*)malloc(sizeof(struct stack));
+	head->next = NULL;
+	
+	string arr;
+	char ans[101] = "";
+	int idx = 0;
+
+	cin >> arr;
+
+	for (int i = 0; i < arr.length(); i++) {
+		if (arr[i] >= 'A' && arr[i] <= 'Z') {
+			ans[idx++] = arr[i];
+		}
+		else if (arr[i] == '+' || arr[i] == '-') {
+			while (true) {
+				if (head->next == NULL) break;
+				else if (head->next->value == '(') break;
+				char value = pop(head);
+				ans[idx++] = value;
+			}
+			push(head, arr[i]);
+		}
+		else if (arr[i] == ')') {
+			while (true) {
+				char value = pop(head);
+				ans[idx++] = value;
+				if (value == '(') break;
+			}
+		}
+		else {
+			if (head->next != NULL) {
+				if (arr[i] == '(') {
+
+				}
+				else if (head->next->value == '*' || head->next->value == '/') {
+					ans[idx++] = pop(head);
+				}
+			}
+			push(head, arr[i]);
+		}
+	}
+
+	while (true) {
+		if (head->next == NULL) break;
+		ans[idx++] = pop(head);
+	}
+
+	for (int i = 0; i < idx; i++) {
+		if (ans[i] == '(') continue;
+		cout << ans[i];
+	}
+	cout << "\n";
+}
