@@ -1,0 +1,109 @@
+#include <iostream>
+using namespace std;
+
+bool is_disable[11];
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int dir;
+	int N;
+	cin >> dir >> N;
+	int value = dir;
+
+	for (int i = 0; i < N; i++) {
+		int value;
+		cin >> value;
+		is_disable[value] = true;
+	}
+
+	int left_remote = dir;
+	int left_count = 0;
+	int left_idx = 0;
+	int left_sum = 100000000;
+	int right_remote = dir;
+	int right_count = 0;
+	int right_idx = 0;
+	int right_sum = 100000000;
+	
+	while (left_remote >= 0) {
+		bool is_number[11] = { false, };
+		if (100 == dir) {
+			left_sum = 0;
+			break;
+		}
+		int temp = left_remote;
+		left_idx = 0;
+		while (true) {
+			left_idx++;
+			if (temp < 10) {
+				is_number[temp] = true;
+				break;
+			}
+			is_number[temp % 10] = true;
+			temp /= 10;
+		}
+		bool is_impossible = false;
+		for (int i = 0; i < 11; i++) {
+			if (is_number[i] && is_disable[i]) {
+				is_impossible = true;
+				break;
+			}
+		}
+		if (is_impossible) {
+			left_count++;
+			left_remote--;
+			continue;
+		}
+		left_sum = left_idx + left_count;
+		break;
+	}
+
+	while (N!=10) {
+		if (N == 9 && is_disable[0] == false) {
+			break;
+		}
+		bool is_number[11] = { false, };
+		int temp = right_remote;
+		if (100 == dir) {
+			right_sum = 0;
+			break;
+		}
+		right_idx = 0;//자릿수
+		while (true) {
+			right_idx++;
+			if (temp < 10) {
+				is_number[temp % 10] = true;
+				break;
+			}
+			is_number[temp % 10] = true;
+			temp /= 10;
+		}
+		bool is_impossible = false;
+		for (int i = 0; i < 11; i++) {
+			if (is_number[i] && is_disable[i]) {
+				is_impossible = true;
+				break;
+			}
+		}
+		if (is_impossible) {
+			right_remote++;
+			right_count++;
+			continue;
+		}
+		else {
+			right_sum = right_idx + right_count;
+			break;
+		}
+	}
+
+	int value_count = abs(100 - dir) > right_sum ? right_sum : abs(100 - dir);
+	if (left_remote >= 0) {
+		value_count = value_count > left_sum ? left_sum : value_count;
+	}
+	cout << value_count << "\n";
+	
+}
