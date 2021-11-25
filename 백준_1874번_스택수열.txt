@@ -1,0 +1,81 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+
+struct stack {
+	int value;
+	struct stack* next;
+};
+
+void push(struct stack* head, int value) {
+	struct stack* newNode = (struct stack*)malloc(sizeof(struct stack));
+	newNode->next = NULL;
+	newNode->value = value;
+
+	if (head->next == NULL) head->next = newNode;
+	else {
+		newNode->next = head->next;
+		head->next = newNode;
+	}
+}
+
+int pop(struct stack* head) {
+	if (head->next == NULL) return -1;
+	struct stack* newNode = head->next;
+	int value = newNode->value;
+	head->next = head->next->next;
+	free(newNode);
+	return value;
+}
+
+int main()
+{
+	struct stack* head = (struct stack*)malloc(sizeof(struct stack));
+	head->next = NULL;
+	int N;
+	int value = 1;
+	int num[100000];
+	char arr[200001] = "";
+	int arr_num = 0;
+	int idx = 0;
+	scanf("%d", &N);
+
+	for (int i = 0; i < N; i++) scanf("%d", &num[i]);
+
+	while (idx != N) {
+		if (head->next == NULL && value <= num[idx]) {
+			push(head, value);
+			arr[arr_num] = '+';
+			arr_num++;
+			value++;
+		}
+		else if (head->next != NULL) {
+			if (head->next->value < num[idx] && value <= num[idx]) {
+				push(head, value);
+				arr[arr_num] = '+';
+				arr_num++;
+				value++;
+			}
+			else if (head->next->value > num[idx]) {
+				arr_num = 0;
+				break;
+			}
+			else if (head->next->value == num[idx]) {
+				pop(head);
+				arr[arr_num] = '-';
+				arr_num++;
+				idx++;
+			}
+		}
+		else {
+			arr_num = 0;
+			break;
+		}
+	}
+	if (arr_num == 0) {
+		printf("NO\n");
+	}
+	else {
+		for (int i = 0; i < arr_num; i++) printf("%c\n", arr[i]);
+	}
+}
