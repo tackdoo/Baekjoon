@@ -1,0 +1,45 @@
+#include <iostream>
+using namespace std;
+
+void dfs_insect(bool(* arr)[52], int x, int y) {
+	arr[x][y] = false;
+	int dx[4] = { 0,1,0,-1 };
+	int dy[4] = { 1,0,-1,0 };
+	for (int i = 0; i < 4; i++) {
+		if (x + dx[i] >= 0 && y + dy[i] >= 0) {
+			if (arr[x + dx[i]][y + dy[i]]) {
+				dfs_insect(arr, x + dx[i], y + dy[i]);
+			}
+		}
+	}
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	int test;
+	cin >> test;
+	for (int i = 0; i < test; i++) {
+		int M, N, K;
+		bool road[52][52] = { false, };
+		cin >> M >> N >> K;
+		for (int j = 0; j < K; j++) {
+			int x, y;
+			cin >> x >> y;
+			road[x][y] = true;
+		}
+		int insect = 0;
+		for (int j = 0; j < M; j++) {
+			for (int k = 0; k < N; k++) {
+				if (road[j][k]) {
+					insect++;
+					dfs_insect(road,j,k);
+				}
+			}
+		}
+		cout << insect << "\n";
+	}
+}
