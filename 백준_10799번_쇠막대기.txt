@@ -1,0 +1,25 @@
+#pragma warning(disable : 4996)
+#include<stdio.h>
+
+int main()
+{
+	char arr[100001] = "";
+	int pipe = 0, sum = 0;
+
+	scanf("%s", arr);
+	
+	for (int i = 0; arr[i] != '\0'; i++) {
+		if (arr[i] == '(') {
+			if (arr[i + 1] == ')') {
+				sum += pipe;
+				i++;
+			}
+			else if (arr[i + 1] == '(') pipe++;
+		}
+		else {
+			pipe--;
+			sum++;
+		}
+	}
+	printf("%d\n", sum);
+}
