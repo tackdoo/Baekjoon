@@ -1,0 +1,87 @@
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+struct stack {
+	char value;
+	struct stack* next;
+};
+
+void push(struct stack* head, char value) {
+	struct stack* newNode = (struct stack*)malloc(sizeof(struct stack));
+	newNode->value = value;
+	newNode->next = NULL;
+	if (head->next == NULL) {
+		head->next = newNode;
+	}
+	else {
+		newNode->next = head->next;
+		head->next = newNode;
+	}
+}
+
+char pop(struct stack* head) {
+	if (head->next == NULL) return '-';
+
+	else {
+		struct stack* newNode = head->next;
+		char value = head->next->value;
+		head->next = head->next->next;
+		free(newNode);
+		return value;
+	}
+}
+
+bool is_bomb(struct stack* head, string key) {
+	struct stack* arr = head->next;
+	for (int i = key.length()-1; i >= 0; i--) {
+		if (arr == NULL) return false;
+		if (arr->value != key[i]) { //문자열이 다르면
+			return false;
+		}
+		arr = arr->next;
+	}
+	return true;
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	struct stack* head = (struct stack*)malloc(sizeof (struct stack));
+	head->next = NULL;
+
+	string arr;
+	cin >> arr;
+	string key;
+	cin >> key;
+
+	for (int i = 0; i < arr.length(); i++) {
+		push(head, arr[i]);
+		if (key[key.length() - 1] == arr[i]) {
+			if (is_bomb(head, key)) { //can bomb
+				for (int j = 0; j < key.length(); j++) {
+					pop(head);
+				}
+			}
+		}
+	}
+	if (head->next == NULL) {
+		cout << "FRULA\n";
+	}
+	else {
+		char ans[1000001] = "";
+		int idx = 0;
+		while (true) {
+			char value = pop(head);
+			if (value == '-') break;
+			ans[idx++] = value;
+		}
+		for (int i = idx - 1; i >= 0; i--) {
+			cout << ans[i];
+		}
+		cout << "\n";
+	}
+}
