@@ -1,0 +1,100 @@
+//괄호가 열릴 때 마다 값을 곱해주고, 닫히면, 값 배열에
+//저장하고, 값을 나눠준다, 그리고 나중에 나머지 다 더하기,
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+using namespace std;
+
+int val[31];
+
+struct stack {
+	char value;
+	struct stack* next;
+};
+
+void push(struct stack* head, char value) {
+	struct stack* newNode = (struct stack*)malloc(sizeof(struct stack));
+	newNode->next = NULL;
+	newNode->value = value;
+
+	if (head->next == NULL) {
+		head->next = newNode;
+	}
+	else {
+		newNode->next = head->next;
+		head->next = newNode;
+	}
+}
+
+char pop(struct stack* head, char value) {
+	if (head->next == NULL) return '0';
+	struct stack* newNode = head->next;
+	if (newNode->value == value) {
+		head->next = head->next->next;
+		free(newNode);
+		return value;
+	}
+	else return '0';
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	struct stack* head = (struct stack*)malloc(sizeof(struct stack));
+	head->next = NULL;
+
+	char arr[61] = "";
+	cin >> arr;
+	int arr_len = strlen(arr);
+
+	int sum = 0;
+	int mul = 1;
+	for (int i = 0; i < arr_len; i++) {
+		if (arr[i] == '(') {
+			push(head, arr[i]);
+			mul *= 2;
+		}
+		else if (arr[i] == '[') {
+			push(head, arr[i]);
+			mul *= 3;
+		}
+		else {
+			if (arr[i] == ')') {
+				if (pop(head, '(') == '0') {
+					sum = -1;
+					break;
+				}
+				val[i] = mul;
+				mul /= 2;
+			}
+			else if (arr[i] == ']') {
+				if (pop(head, '[')=='0') {
+					sum = -1;
+					break;
+				}
+				val[i] = mul;
+				mul /= 3;
+			}
+		}
+	}
+
+	if (sum == -1) {
+		cout << "0\n";
+	}
+	else {
+		if (head->next != NULL) {
+			cout << "0\n";
+		}
+		else {
+			sum += val[0];
+			for (int i = 1; i < arr_len; i++) {
+				if (val[i - 1] != 0) continue;
+				sum += val[i];
+			}
+			cout << sum << "\n";
+		}
+	}
+}
