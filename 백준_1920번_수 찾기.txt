@@ -1,0 +1,82 @@
+#include <iostream>
+using namespace std;
+
+int arr[100001];
+
+void heaptify(int value, int end) {
+	arr[end] = value;
+	while (end > 0) {
+		int root = (end - 1) / 2;
+		if (arr[root] < arr[end]) {
+			int temp = arr[end];
+			arr[end] = arr[root];
+			arr[root] = temp;
+			end = root;
+		}
+		else break;
+	}
+}
+
+void sort(int end) {
+	while (end > 0) {
+		int value = arr[0];
+		arr[0] = arr[end];
+		arr[end] = value;
+		end--;
+		
+		int root = 0;
+		while (root <= end) {
+			int child = root * 2 + 1;
+			if (child > end) break;
+			if (child + 1 <= end && arr[child + 1] > arr[child]) child++;
+			if (arr[root] <= arr[child]) {
+				int temp = arr[root];
+				arr[root] = arr[child];
+				arr[child] = temp;
+				root = child;
+			}
+			else break;
+		}
+	}
+	
+}
+
+bool find_num(int start, int end, int value) {
+	if (start > end) return false;
+	int mid = (start + end) / 2;
+	
+	if (arr[mid] == value) {
+		return true;
+	}
+	else if (arr[mid] > value) {
+		return find_num(start, mid - 1, value);
+	}
+	else {
+		return find_num(mid + 1, end, value);
+	}
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int N;
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		int value;
+		cin >> value;
+		heaptify(value, i);
+	}
+	sort(N - 1);
+
+	int M;
+	cin >> M;
+	for (int i = 0; i < M; i++) {
+		int value;
+		cin >> value;
+		if (find_num(0, N - 1, value))  cout << 1 << "\n";
+		else cout << 0 << "\n";
+	}
+}
