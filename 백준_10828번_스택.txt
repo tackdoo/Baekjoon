@@ -1,0 +1,75 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct stack {
+	int value;
+	struct stack* next;
+};
+
+void push_Stack(struct stack* head) {
+	int num;
+	struct stack* newNode = (struct stack*)malloc(sizeof(struct stack));
+	scanf("%d", &num);
+	newNode->value = num;
+	newNode->next = NULL;
+	if (head->next == NULL) {
+		head->next = newNode;
+	}
+	else {
+		newNode->next = head->next;
+		head->next = newNode;
+	}
+}
+
+int pop_Stack(struct stack* head) {
+	if (head->next == NULL) return -1;
+	else {
+		int value;
+		struct stack* newNode = head->next;
+		value = head->next->value;
+		head->next = head->next->next;
+		free(newNode);
+		return value;
+	}
+}
+
+int size_Stack(struct stack* head) {
+	int size = 0;
+	
+	for (struct stack* i = head->next; i != NULL; i = i->next) {
+		size++;
+	}
+	return size;
+}
+
+int empty_Stack(struct stack* head) {
+	if (head->next == NULL) return 1;
+	else return 0;
+}
+
+int top_Stack(struct stack* head) {
+	if (head->next == NULL) return -1;
+	else return head->next->value;
+}
+
+int main(void) {
+	struct stack* head = (struct stack*)malloc(sizeof(struct stack));
+	head->next = NULL;
+	char a[10];
+	int N;
+	char push[10] = "push", pop[10] = "pop", size[10] = "size", empty[10] = "empty", top[10] = "top";
+	int num;
+	scanf("%d", &N);
+
+	for (int i = 0; i < N; i++) {
+		getchar();
+		scanf("%s", a);
+		if (!strcmp(a, push)) push_Stack(head);
+		else if (!strcmp(a, pop))  printf("%d\n", pop_Stack(head));
+		else if (!strcmp(a, size)) printf("%d\n", size_Stack(head));
+		else if (!strcmp(a, empty)) printf("%d\n", empty_Stack(head));
+		else if (!strcmp(a, top)) printf("%d\n", top_Stack(head));
+	}
+}
