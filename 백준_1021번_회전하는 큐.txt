@@ -1,0 +1,62 @@
+#include <iostream>
+using namespace std;
+
+bool is_exist[52];
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int N, M;
+	int count = 0;
+	cin >> N >> M;
+	is_exist[0] = true;
+	is_exist[N + 1] = true;
+
+	int point = 1;
+	for (int i = 0; i < M; i++) {
+		int value;
+		cin >> value;
+		if (value == point) {
+			is_exist[point] = true;
+			if (i + 1 == N) break;
+			while (is_exist[++point]) {
+				if (point > N) point = 0;
+			}
+		}
+		else {
+			int right = 0, left = 0;
+			int min;
+			if (value - point < (N + point) - value) {
+				while (1) {
+					right++;
+					while (is_exist[++point]) {
+					if (point > N) point = 0;
+					}
+					if (point == value) break;
+				}
+				min = right < N - right - i ? right : N - right - i;
+			}
+			else {
+				while (1) {
+					left++;
+					while (is_exist[--point]) {
+						if (point < 1) point = N+1;
+					}
+					if (point == value) break;
+				}
+				min = left < N - left - i ? left : N - left - i;
+			}
+			count += min;
+			is_exist[point] = true;
+			if (i + 1 == N) break;
+			while (is_exist[++point]) {
+				if (point > N) point = 0;
+			}
+		}
+	}
+
+	cout << count;
+}
