@@ -1,0 +1,56 @@
+#include <iostream>
+using namespace std;
+
+int N, X, Y;
+int value;
+int sum;
+bool is_fill = false;
+void find_road(int dx, int dy, int size) {
+	if (is_fill) return;
+	if (size == 0) {
+		if (dx == X && dy == Y) {
+			value = sum;
+			if (is_fill) return;
+		}
+		sum++;
+	}
+	else {
+		size--;
+		if (X <= dx - (1 << size) && Y <= dy - (1 << size)) {
+			find_road(dx - (1 << size), dy-(1<<size), size);
+		}
+		else {
+			sum += (1 << size) * (1 << size);
+		}
+		if (is_fill) return;
+		if (X <= dx - (1 << size)&&Y> dy-(1<<size)) {
+			find_road(dx - (1 << size), dy, size);
+		}
+		else {
+			sum += (1 << size) * (1 << size);
+		}
+		if (is_fill) return;
+		if (X > dx - (1 << size) && Y <= dy - (1 << size)) {
+			find_road(dx, dy - (1 << size), size);
+		}
+		else {
+			sum += (1 << size) * (1 << size);
+		}
+		if (is_fill) return;
+		find_road(dx, dy, size);
+		if (is_fill) return;
+	}
+}
+
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	cin >> N >> X >> Y;
+	find_road((1 << N) - 1, (1 << N) - 1, N);
+	//3일때,7,7/2를 넣어줌
+	cout << value << "\n";
+}
