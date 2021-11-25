@@ -1,0 +1,58 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+
+void push(unsigned long long int* arr, unsigned long long int value, int end) {
+	arr[end] = value;
+	while (end > 0) {
+		int root = (end - 1) / 2;
+		if (arr[end] > arr[root]) {
+			unsigned long long int temp = arr[end];
+			arr[end] = arr[root];
+			arr[root] = temp;
+			end = root;
+		}
+		else break;
+	}
+}
+
+void heap(unsigned long long int* arr, int end) {
+	int root = 0;
+	while (root * 2 + 1 < end) {
+		int child = root * 2 + 1;
+		if (arr[child] < arr[child + 1] && child+1<end) child++;
+		if (arr[root] <= arr[child]) {
+			unsigned long long int temp = arr[root];
+			arr[root] = arr[child];
+			arr[child] = temp;
+			root = child;
+		}
+		else break;
+	}
+}
+
+int main(void)
+{
+	int N;
+	int idx = 0;
+	unsigned long long arr[100001] = { 0, };
+	scanf("%d", &N);
+
+	for (int i = 0; i < N; i++) {
+		unsigned long long int value;
+		scanf("%lld", &value);
+		if (value == 0) {
+			printf("%lld\n", arr[0]);
+			if (idx == 0) {
+				arr[idx] = 0;
+				continue;
+			}
+			arr[0] = arr[--idx];
+			arr[idx] = 0;
+			heap(arr, idx);
+		}
+		else {
+			push(arr, value, idx++);
+		}
+	}
+
+}
