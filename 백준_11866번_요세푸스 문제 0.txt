@@ -1,0 +1,70 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+
+struct circle {
+	int value;
+	struct circle* next;
+	struct circle* back;
+};
+
+void push(struct circle* head, int value) {
+	struct circle* newNode = (struct circle*)malloc(sizeof(struct circle));
+	newNode->value = value;
+	if (head->next == NULL) {
+		head->next = newNode;
+		newNode->next = newNode;
+		newNode->back = newNode;
+	}
+	else {
+		newNode->next = head->next;
+		newNode->back = head->next->back;
+		head->next->back->next = newNode;
+		head->next->back = newNode;
+	}
+}
+
+int pop(struct circle* head, int time) {
+	if (head->next == NULL) return 0;
+	int value;
+	if (head->next == head->next->next) {
+		struct circle* newNode = head->next;
+		newNode = newNode->next;
+		value = newNode->value;
+		head->next = NULL;
+		free(newNode);
+	}
+	else {
+		struct circle* newNode = head;
+		for (int i = 0; i < time; newNode = newNode->next, i++);
+		head->next = newNode->next;
+		newNode->back->next = newNode->next;
+		newNode->next->back = newNode->back;
+		head->next = newNode->next;
+		value = newNode->value;
+		free(newNode);
+	}
+	return value;
+}
+
+int main()
+{
+	struct circle* head = (struct circle*)malloc(sizeof(struct circle));
+	head->next = NULL;
+	head->back = NULL;
+	int N, K;
+
+	scanf("%d %d", &N, &K);
+
+	for (int i = 1; i <= N; i++) push(head, i);
+	int value;
+	printf("<");
+	for (int i = 0; i < N; i++) {
+		value = pop(head, K);
+		if (i + 1 == N) {
+			printf("%d>\n", value);
+			break;
+		}
+		printf("%d, ", value);
+	}
+}
