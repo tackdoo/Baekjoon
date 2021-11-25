@@ -1,0 +1,51 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdbool.h>
+
+unsigned short arr[501][501];
+int value[501][501];
+bool is_visit[501][501];
+
+int N, M;
+//N, y == 세로, M,x == 가로
+// M개짜리 N줄
+int find_road(int x,int y) {
+	int dx[4] = { 1,0,-1,0 };
+	int dy[4] = { 0,1,0,-1 };
+	if (is_visit[y][x]) return value[y][x];
+	is_visit[y][x] = true;
+	if (y==N-1&&x==M-1) {
+		return value[y][x] = 1;
+	}
+	if (value[y][x] != 0) return value[y][x];
+	for (int i = 0; i < 4; i++) {
+		int val = 0;
+		if (x + dx[i] >= 0 && x + dx[i] < M) {
+			if (y + dy[i] >= 0 && y + dy[i] < N) {
+				if (arr[y][x] > arr[y + dy[i]][x + dx[i]]) {
+					val = find_road(x + dx[i], y + dy[i]);
+					if (value[y + dy[i]][x + dx[i]] > 0) value[y][x] += value[y+dy[i]][x+dx[i]];
+					else {
+						value[y][x] += val;
+					}
+					
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+int main()
+{
+
+	scanf("%d %d", &N, &M);
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) scanf("%d", &arr[i][j]);
+	}
+
+	find_road(0, 0);
+
+	printf("%d\n", value[0][0]);
+}
