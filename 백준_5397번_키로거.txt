@@ -1,0 +1,107 @@
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+struct list {
+	char value;
+	struct list* next;
+	struct list* back;
+};
+
+void push(struct list* point, struct list* head, char value) {
+	struct list* newNode = (struct list*)malloc(sizeof(struct list));
+	newNode->value = value;
+	newNode->next = NULL;
+	newNode->back = NULL;
+
+	if (point->next == NULL) {
+		head->next = newNode;
+		head->back = newNode;
+		point->next = newNode;
+		point->back = newNode;
+	}
+	else {
+		if (point->next->next != NULL) {
+			point->next->next->back = newNode;
+			newNode->next = point->next->next;
+			newNode->back = point->next;
+			point->next->next = newNode;
+			point->next = newNode;
+		}
+		else {
+			newNode->next = point->next->next;
+			newNode->back = point->next;
+			point->next->next = newNode;
+			point->next = newNode;
+		}
+	}
+}
+
+void pop(struct list* point) {
+	if (point->next->value == '>' || point->next == NULL) return;
+	struct list* newNode = point->next;
+
+	if (point->next->next == NULL) {
+		point->next = point->next->back;
+		point->next->next = NULL;
+	}
+	else {
+		point->next->next->back = point->next->back;
+		point->next->back->next = point->next->next;
+		point->next = point->next->back;
+	}
+	
+	free(newNode);
+	return;
+}
+
+void print(struct list* head) {
+	while (head->next != NULL) {
+		struct list* i = head->next;
+		if (i->value != '>') cout << i->value;
+		head->next = head->next->next;
+		free(i);
+	}
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int N;
+	cin >> N;
+
+	for (int i = 0; i < N; i++) {
+		struct list* head = (struct list*)malloc(sizeof(struct list));
+		struct list* point = (struct list*)malloc(sizeof(struct list));
+		head->next = NULL;
+		point->next = NULL;
+
+		getchar();
+		string arr;
+		cin >> arr;
+		int arr_len = arr.length();
+		push(point, head, '>'); // 시작점을 알리는 값
+		for (int j = 0; j < arr_len; j++) {
+			if (arr[j] == '<') {
+				if (point->next->value == '>') continue;
+				point->next = point->next->back;
+			}
+			else if (arr[j] == '>') {
+				if (point->next->next == NULL) continue;
+				point->next = point->next->next;
+			}
+			else if (arr[j] == '-') {
+				pop(point);
+			}
+			else {
+				push(point, head, arr[j]);
+			}
+		}
+
+		print(head);
+		cout << "\n";
+	}
+}
