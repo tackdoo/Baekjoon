@@ -1,0 +1,161 @@
+#pragma warning(disable:4996)
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+using namespace std;
+
+struct list {
+	int value;
+	struct list* direct[2];
+};
+// next = direct[0]
+// back = direct[1];
+void push(struct list* head, struct list* tail, int value, int* dir) {
+	struct list* newNode = (struct list*)malloc(sizeof(struct list));
+	newNode->direct[dir[0]] = NULL;
+	newNode->direct[dir[1]] = NULL;
+	newNode->value = value;
+
+	if (head->direct[dir[0]] == NULL) {
+		head->direct[dir[0]] = newNode;
+		tail->direct[dir[0]] = newNode;
+		head->direct[dir[1]] = newNode;
+		tail->direct[dir[1]] = newNode;
+	}
+	else {
+		tail->direct[dir[0]]->direct[dir[0]] = newNode;
+		newNode->direct[dir[1]] = tail->direct[dir[0]];
+		tail->direct[dir[0]] = newNode;
+		tail->direct[dir[1]] = newNode;
+	}
+}
+
+int pop(struct list* head, struct list* tail, int* dir) {
+	if (head->direct[dir[0]] == NULL) return -1;
+	struct list* newNode = head->direct[dir[0]];
+	int value = newNode->value;
+	if (head->direct[dir[0]] == tail->direct[dir[0]]) {
+		head->direct[dir[0]] = NULL;
+		head->direct[dir[1]] = NULL;
+		tail->direct[dir[0]] = NULL;
+		tail->direct[dir[1]] = NULL;
+	}
+	else {
+		head->direct[dir[0]] = head->direct[dir[0]]->direct[dir[0]];
+		head->direct[dir[1]] = head->direct[dir[0]];
+		head->direct[dir[0]]->direct[dir[1]] = NULL;
+	}
+	free(newNode);
+	return value;
+}
+
+//정 방향 = 0,1  // 역방향 = 1,0
+
+void pushInt(char* arr, struct list* head, struct list* tail) {
+	char num[5] = "";
+	int num_idx = 0;
+	int dir[2] = { 0,1 };
+	int arr_len = strlen(arr);
+	for (int i = 0; i < arr_len; i++) {
+		if (arr[i] == '[') continue;
+		else if (arr[i] == ']') {
+			if (num_idx == 0) return;
+			else {
+				int value = atoi(num);
+				num_idx = 0;
+				strcpy(num, "    ");
+				push(head, tail, value, dir);
+				return;
+			}
+		}
+		else if (arr[i] == ',') {
+			int value = atoi(num);
+			num_idx = 0;
+			strcpy(num, "    ");
+			push(head, tail, value, dir);
+		}
+		else {
+			num[num_idx++] = arr[i];
+		}
+
+	}
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	struct list* head = (struct list*) malloc(sizeof(struct list));
+	struct list* tail = (struct list*)malloc(sizeof(struct list));
+	head->direct[0] = NULL;
+	head->direct[1] = NULL;
+	tail->direct[0] = NULL;
+	tail->direct[1] = NULL;
+
+	int T;
+	cin >> T;
+	for (int i = 0; i < T; i++) {
+		char p[100002];
+		char arr[500001] = "";
+		int count;
+		getchar();
+		cin >> p;
+		cin >> count;
+		getchar();
+		cin >> arr;
+		pushInt(arr, head, tail);
+		int dir[2] = { 0,1 };
+		int value = 0;
+		count = 0;
+		int p_len = strlen(p);
+		for (int i = 0; i < p_len; i++) {
+			if (p[i] == 'D') {
+				if (count & 1) { // R이 홀수개 나왔거나, i가 마지막 일 때, 
+					head->direct[0] = tail->direct[0];
+					tail->direct[0] = head->direct[1];
+					head->direct[1] = head->direct[0];
+					tail->direct[1] = tail->direct[0]; //연결리스트 방향 바꿔주기.
+					int temp = dir[0];
+					dir[0] = dir[1];
+					dir[1] = temp;
+					count = 0;
+				}
+				value = pop(head, tail, dir);
+				if (value == -1) break; // 값이 없다면 더이상 연살 할 필요 없으므로 탈출.
+			}
+			else {//R이 나온 갯수 세어주고,
+				count++;
+				if (i + 1 == p_len && count & 1) {
+					head->direct[0] = tail->direct[0];
+					tail->direct[0] = head->direct[1];
+					head->direct[1] = head->direct[0];
+					tail->direct[1] = tail->direct[0]; //연결리스트 방향 바꿔주기.
+					int temp = dir[0];
+					dir[0] = dir[1];
+					dir[1] = temp;
+					break;
+				}
+			}
+		}
+		if (value == -1) {
+			cout << "error\n"; // 값이 없다면 에러 출력하기
+		}
+		else {//노드가 빌 때까지 다 출력 해 주기.
+			cout << "[";
+			if (head->direct[dir[0]] == NULL) {
+				cout << "]\n";
+				continue;
+			}
+			for (; ;) {
+				value = pop(head, tail, dir);
+				if (head->direct[dir[0]] == NULL) {
+					cout << value << "]\n";
+					break;
+				}
+				cout << value << ",";
+			}
+		}
+
+	}
+}
