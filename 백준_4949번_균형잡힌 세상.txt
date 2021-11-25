@@ -1,0 +1,74 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+
+struct stack {
+	char value;
+	struct stack* next;
+};
+
+void push(struct stack* head, char value) {
+	struct stack* newNode = (struct stack*)malloc(sizeof(struct stack));
+	newNode->next = NULL;
+	newNode->value = value;
+
+	if (head->next == NULL) head->next = newNode;
+	else {
+		newNode->next = head->next;
+		head->next = newNode;
+	}
+}
+
+int pop(struct stack* head, char value) {
+	if (head->next == NULL) return -1;
+	struct stack* newNode = head->next;
+	if (newNode->value == '(' && value == ')') {
+		head->next = head->next->next;
+		free(newNode);
+		return 1;
+	}
+	else if (newNode->value == '[' && value == ']') {
+		head->next = head->next->next;
+		return 1;
+	}
+	else return -1;
+}
+
+void empty_stack(struct stack* head) {
+	if (head->next == NULL) return;
+	else {
+		while (1) {
+			struct stack* newNode = head->next;
+			head->next = head->next->next;
+			free(newNode);
+			if (head->next == NULL) return;
+		}
+	}
+}
+
+int main()
+{
+	struct stack* head = (struct stack*)malloc(sizeof(struct stack));
+	head->next = NULL;
+		
+	while (1) {
+		char arr[101];
+		scanf("%[^\n]", arr);
+		if (arr[0] == '.') break;
+		else {
+			int val = 1;
+			for (int i = 0;; i++) {
+				if (arr[i] == '(') push(head, arr[i]);
+				else if (arr[i] == ')') val = pop(head, arr[i]);
+				else if (arr[i] == '[') push(head, arr[i]);
+				else if (arr[i] == ']') val = pop(head, arr[i]);
+				else if (arr[i] == '.') break;
+				if (val != 1) break;
+			}
+			getchar();
+			if (val == 1 && head->next == NULL)printf("yes\n");
+			else printf("no\n");
+			empty_stack(head);
+		}
+	}
+}
