@@ -1,0 +1,24 @@
+#include <iostream>
+using namespace std;
+
+long long int arr[201][201];
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int N, K;
+	cin >> N >> K;
+	for (int i = 1; i <= K; i++) arr[0][i] = 1;
+
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= K; j++) {
+			arr[i][j] = arr[i][j - 1] + arr[i - 1][j];
+			if (arr[i][j] > 1000000000) arr[i][j] %= 1000000000;
+		}
+	}
+
+	cout << arr[N][K] << "\n";
+}
