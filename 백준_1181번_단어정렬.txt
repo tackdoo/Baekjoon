@@ -1,0 +1,79 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <string.h>
+
+char arr[200000][51];
+
+//앞에 가는 게 1, 뒤에 가는 게 -1;
+//앞에 인자가 사전 앞순에 오는게 1, 같으면 0, 뒤에오면 -1
+int is_char(char* v1, char* v2) {
+	int len_v1 = strlen(v1);
+	int len_v2 = strlen(v2);
+	if (len_v1 > len_v2) return 1;
+	else if (len_v1 < len_v2) return -1;
+	else {
+		for (int i = 0; i < len_v1; i++) {
+			if (v1[i] < v2[i]) return -1;
+			else if (v1[i] > v2[i]) return 1;
+		}
+		return 0;
+	}
+}
+
+void heaptify(char* word, int end) {
+strcpy(arr[end], word);
+	while (end > 0) {
+		int root = (end - 1) / 2;
+		if (is_char(arr[end], arr[root]) == 1) {
+			char temp[51] = "";
+			strcpy(temp, arr[end]);
+			strcpy(arr[end], arr[root]);
+			strcpy(arr[root], temp);
+			end = root;
+		}
+		else return;
+	}
+}
+
+void sort(int end) {
+	while (end > 0) {
+		char temp[51] = "";
+		strcpy(temp, arr[end]);
+		strcpy(arr[end], arr[0]);
+		strcpy(arr[0], temp);
+		end--;
+		int root = 0;
+		while (root < end) {
+			int child = root * 2 + 1;
+			if (child > end) break;
+			if(is_char(arr[child],arr[child+1])!=1 && child+1<=end) child++;
+			if (is_char(arr[root], arr[child]) != 1) {
+				strcpy(temp, arr[root]);
+				strcpy(arr[root], arr[child]);
+				strcpy(arr[child], temp);
+				root = child;
+			}
+			else break;
+		}
+	}
+}
+
+int main()
+{
+	int N;
+	scanf("%d", &N);
+
+	for (int i = 0; i < N; i++) {
+		char word[51] = "";
+		getchar();
+		scanf("%s", word);
+		heaptify(word, i);
+	}
+
+	sort(N-1);
+
+	for (int i = 0; i < N; i++) {
+		if (strcmp(arr[i], arr[i + 1]) == 0 && i+1<N) continue;
+		printf("%s\n", arr[i]);
+	}
+}
