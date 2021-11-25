@@ -1,0 +1,44 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+
+int main()
+{
+	char arr[9][9] = {
+		"BWBWBWBW",
+		"WBWBWBWB",
+		"BWBWBWBW",
+		"WBWBWBWB",
+		"BWBWBWBW",
+		"WBWBWBWB",
+		"BWBWBWBW",
+		"WBWBWBWB"
+	};
+	char user[51][51];
+	int count = 0;
+	int N, M;
+	
+	scanf("%d %d", &N, &M);
+
+	for (int i = 0; i < N; i++) {
+		getchar();
+		for (int j = 0; j < M; j++) {
+			scanf("%c", &user[i][j]);
+		}
+	}
+
+	int min = 9999;
+	for (int i = 0; i <= N - 8; i++) {
+		for (int j = 0; j <= M - 8; j++) {
+			int count = 0;
+			for (int k = 0; k < 8; k++) {
+				for (int l = 0; l < 8; l++) {
+					if (arr[k][l] != user[i + k][j + l]) count++;
+				}
+			}
+			count = count > 32 ? 64 - count : count;
+			min = min > count ? count : min;
+		}
+	}
+
+	printf("%d\n", min);
+}
