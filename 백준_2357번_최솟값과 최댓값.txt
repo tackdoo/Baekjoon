@@ -1,0 +1,82 @@
+#include <iostream>
+using namespace std;
+
+int max_idx[100001];
+int min_idx[100001];
+int arr[100001];
+
+void update(int start, int end, int value) {
+	int idx = start;
+	while (idx <= end) {
+		if (max_idx[idx] == 0 || arr[max_idx[idx]] <= value) {
+			max_idx[idx] = start;
+		}
+		else {
+			break;
+		}
+		idx += (idx & -idx);
+	}
+	idx = start;
+	while (idx <= end) {
+		if (min_idx[idx] == 0 || arr[min_idx[idx]] >= value) {
+			min_idx[idx] = start;
+		}
+		else {
+			break;
+		}
+		idx += (idx & -idx);
+	}
+}
+
+int find_min(int start, int end) {
+	int min = 1000000000;
+	while (end >= start) {
+		if (start <= min_idx[end]) {
+			min = min > arr[min_idx[end]] ? arr[min_idx[end]] : min;
+		}
+		else {
+			min = min > arr[end] ? arr[end] : min;
+			end--;
+			continue;
+		}
+		end -= (end & -end);
+	}
+	return min;
+}
+
+int find_max(int start, int end) {
+	int max = 0;
+	while (end >= start) {
+		if (start <= max_idx[end]) {
+			max = max > arr[max_idx[end]] ? max : arr[max_idx[end]];
+		}
+		else {
+			max = max > arr[end] ? max : arr[end];
+			end--;
+			continue;
+		}
+		end -= (end & -end);
+	}
+	return max;
+}
+
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int N, M;
+	cin >> N >> M;
+
+	for (int i = 1; i <= N; i++) {
+		cin >> arr[i];
+		update(i, N, arr[i]);
+	}
+
+	for (int i = 0; i < M; i++) {
+		int start, end;
+		cin >> start >> end;
+		cout << find_min(start, end) << " " << find_max(start, end) << "\n";
+	}
+
+}
