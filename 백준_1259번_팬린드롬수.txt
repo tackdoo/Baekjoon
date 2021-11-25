@@ -1,0 +1,29 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	while (1) {
+		string arr;
+		cin >> arr;
+		if (arr.length() == 1 && arr[0] == '0') break;
+		
+		int end = arr.length() - 1;
+		int start = 0;
+		bool is_true = false;
+		while (start < end) {
+			if (arr[start++] != arr[end--]) {
+				is_true = true;
+				break;
+			}
+		}
+		
+		if (is_true) cout << "no\n";
+		else cout << "yes\n";
+	}
+}
