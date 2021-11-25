@@ -1,0 +1,58 @@
+#include <iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+
+bool arr[1001][1001];
+
+bool is_visit_dfs[1001];
+
+void find_dfs(int head) {
+	if (is_visit_dfs[head]) return;
+	cout << head << " ";
+	is_visit_dfs[head] = true;
+	for (int i = 1; i < 1001; i++) {
+		if (is_visit_dfs[i]) continue;
+		if(arr[head][i]) find_dfs(i);
+	}
+	return;
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	int N, E, V;
+	cin >> N >> E >> V;
+	for (int i = 0; i < E; i++) {
+		int value1, value2;
+		cin >> value1 >> value2;
+		arr[value1][value2] = true;
+		arr[value2][value1] = true;
+	}
+	int head = V;
+	find_dfs(head);
+	cout << "\n";
+	head = V;
+	queue<int> bfs;
+	bfs.push(head);
+	bool is_visit[1001] = { false, };
+	while (bfs.size() != 0) {
+		int value = bfs.front();
+		is_visit[value] = true;
+		bfs.pop();
+		for (int i = 1; i <= 1000; i++) {
+			if(is_visit[i]) continue;
+			if (arr[value][i]) {
+				bfs.push(i);
+				is_visit[i] = true;
+			}
+		}
+		cout << value << " ";
+	}
+
+
+	
+}
