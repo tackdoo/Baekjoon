@@ -1,0 +1,37 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int x, y;
+	cin >> x >> y;
+	int val1, val2;
+	int time;
+	cin >> val1 >> val2;
+	cin >> time;
+	if (time/x & 1) { //나눴을 때, 홀수라면,
+		//천장 찍고 내려 오는 중임
+
+		val1 = abs((x - (time % x) - val1));
+
+	}
+	else {
+		val1 = val1 + (time % x);
+		val1 = val1 > x ? x - (val1-x) : val1;
+	}
+
+	if (time/y & 1) { //나눴을 때, 홀수라면,
+
+		val2 = abs((y - (time % y) - val2));
+	}
+	else {
+		val2 = val2 + (time % y);
+		val2 = val2 > y ? y - (val2-y) : val2;
+	}
+
+	cout << val1 << " " << val2 << "\n";
+}
